@@ -1,0 +1,351 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #0f172a 100%);
+    color: white;
+    overflow-x: hidden;
+  }
+  
+  #root {
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  /* Custom scrollbar for ENS Chat Dapp */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(17, 24, 39, 0.5);
+    border-radius: 3px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+    border-radius: 3px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #7c3aed, #0891b2);
+  }
+
+  /* Chat specific scrollbar */
+  #chat-messages::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  #chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  #chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.3);
+    border-radius: 2px;
+  }
+  
+  /* Custom button styles */
+  .btn-crazy {
+    @apply bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 hover:from-purple-700 hover:to-cyan-700 hover:scale-105 shadow-lg hover:shadow-purple-500/25;
+  }
+  
+  .btn-crazy-outline {
+    @apply border-2 border-purple-400 text-purple-400 font-medium py-3 px-6 rounded-xl transition-all duration-300 hover:bg-purple-400 hover:text-white backdrop-blur-sm;
+  }
+  
+  /* Glass morphism effects */
+  .glass-crazy {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-lg;
+  }
+  
+  .glass-dark {
+    @apply bg-gray-900/60 backdrop-blur-md border border-gray-700/30 rounded-xl shadow-xl;
+  }
+
+  /* Message bubble styles */
+  .message-bubble-own {
+    @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl rounded-br-md shadow-chat-bubble;
+  }
+
+  .message-bubble-other {
+    @apply bg-gray-700/80 backdrop-blur-sm text-white rounded-2xl rounded-bl-md border border-gray-600/30 shadow-chat-bubble;
+  }
+  
+  /* Gradient text */
+  .gradient-crazy {
+    @apply bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent;
+  }
+
+  .gradient-crazy-alt {
+    @apply bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent;
+  }
+  
+  /* Custom focus states */
+  .focus-crazy {
+    @apply focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:ring-offset-2 focus:ring-offset-gray-900 focus:border-purple-400;
+  }
+  
+  /* Typing indicator animation */
+  .typing-dot {
+    @apply w-2 h-2 bg-cyan-400 rounded-full animate-pulse;
+  }
+
+  /* Online status indicator */
+  .status-online {
+    @apply w-3 h-3 bg-green-500 border-2 border-gray-800 rounded-full;
+  }
+
+  .status-offline {
+    @apply w-3 h-3 bg-gray-500 border-2 border-gray-800 rounded-full;
+  }
+
+  /* Chat area background */
+  .chat-bg {
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(236, 72, 153, 0.05) 0%, transparent 50%);
+  }
+}
+
+@layer utilities {
+  /* Custom animations */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+  
+  @keyframes glow {
+    from {
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    }
+    to {
+      box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+    }
+  }
+
+  @keyframes message-slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes typing-bounce {
+    0%, 60%, 100% {
+      transform: scale(1);
+    }
+    30% {
+      transform: scale(1.2);
+    }
+  }
+  
+  .animate-message-in {
+    animation: message-slide-in 0.3s ease-out forwards;
+  }
+
+  .animate-typing {
+    animation: typing-bounce 1.4s ease-in-out infinite;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  
+  /* Text utilities */
+  .text-shadow-sm {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
+  
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.7);
+  }
+
+  /* Backdrop utilities */
+  .backdrop-blur-xs {
+    backdrop-filter: blur(2px);
+  }
+
+  /* Custom grid */
+  .grid-chat {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    height: 100vh;
+  }
+
+  @media (max-width: 1024px) {
+    .grid-chat {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Container utilities */
+  .container-ens {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Interactive states */
+  .interactive-scale {
+    transition: transform 0.2s ease;
+  }
+
+  .interactive-scale:hover {
+    transform: scale(1.02);
+  }
+
+  .interactive-scale:active {
+    transform: scale(0.98);
+  }
+}
+
+/* RainbowKit customization for ENS Chat Dapp */
+[data-rk] {
+  --rk-colors-accentColor: #8b5cf6;
+  --rk-colors-accentColorForeground: #ffffff;
+  --rk-colors-connectButtonBackground: linear-gradient(45deg, #8b5cf6, #06b6d4);
+  --rk-colors-connectButtonText: #ffffff;
+  --rk-radii-connectButton: 12px;
+  --rk-fonts-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  
+  /* BRIGHTER WALLET MODAL COLORS */
+  --rk-colors-modalBackground: #374151 !important;
+  --rk-colors-modalBorder: #6B7280 !important;
+  --rk-colors-modalText: #F9FAFB !important;
+  --rk-colors-modalTextSecondary: #D1D5DB !important;
+  --rk-colors-menuItemBackground: #4B5563 !important;
+  --rk-colors-menuItemBackgroundHover: #6B7280 !important;
+  --rk-colors-profileAction: #4B5563 !important;
+  --rk-colors-profileActionHover: #6B7280 !important;
+}
+
+/* Dark theme for RainbowKit modals */
+[data-rk] .iekbcc0 {
+  background: rgba(55, 65, 81, 0.98) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(139, 92, 246, 0.2) !important;
+}
+
+/* Specific wallet option styling for better visibility */
+[data-rk] button[data-testid="rk-wallet-option"] {
+  background-color: #4B5563 !important;
+  border-color: #6B7280 !important;
+  color: #F9FAFB !important;
+  transition: all 0.2s ease !important;
+}
+
+[data-rk] button[data-testid="rk-wallet-option"]:hover {
+  background-color: #6B7280 !important;
+  transform: scale(1.02) !important;
+}
+
+/* Wallet name and description text */
+[data-rk] button[data-testid="rk-wallet-option"] div {
+  color: #F9FAFB !important;
+}
+
+[data-rk] button[data-testid="rk-wallet-option"] div + div {
+  color: #D1D5DB !important;
+}
+
+/* Modal backdrop for better visibility */
+[data-rk] div[role="dialog"] {
+  background-color: #374151 !important;
+  border-color: #6B7280 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Modal header text */
+[data-rk] h1, [data-rk] h2 {
+  color: #F9FAFB !important;
+}
+
+/* Connect button in modal */
+[data-rk] button[data-testid="rk-connect-button"] {
+  background: linear-gradient(45deg, #8b5cf6, #06b6d4) !important;
+  color: white !important;
+  border: none !important;
+}
+
+/* Custom selection colors */
+::selection {
+  background: rgba(139, 92, 246, 0.3);
+}
+
+::-moz-selection {
+  background: rgba(139, 92, 246, 0.3);
+}
+
+/* Disable text selection on UI elements */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Responsive typography */
+@media (max-width: 640px) {
+  .text-responsive-lg {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .text-responsive-lg {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+}
+
+/* Loading state */
+.loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(139, 92, 246, 0.1) 0%,
+    rgba(6, 182, 212, 0.2) 50%,
+    rgba(139, 92, 246, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
