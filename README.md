@@ -1,12 +1,53 @@
-# React + Vite
+# ENS Chat Dapp
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A real-time decentralized chat application that combines ENS domain registration on the blockchain with instant WebSocket messaging.
+Features
+🔗 Blockchain Identity
 
-Currently, two official plugins are available:
+ENS Domain Registration: Register your unique .ens name on-chain
+Wallet Authentication: Connect with MetaMask or other Web3 wallets
+Decentralized Identity: Your identity is stored on the blockchain
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+💬 Real-time Messaging
 
-## Expanding the ESLint configuration
+Instant Messages: No gas fees for individual messages
+WebSocket Connection: Real-time message delivery
+Group Chat: Public chat room for all users
+Direct Messages: Private conversations between users
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+✨ User Experience
+
+No MetaMask Popups: Messages send instantly without transaction confirmations
+Contact Management: Add users by wallet address
+Online Status: See who's currently active
+Message Status: Delivery confirmations and timestamps
+Responsive Design: Works on desktop and mobile
+
+Tech Stack
+Frontend
+
+React - UI framework
+Vite - Build tool and dev server
+Wagmi - Ethereum React hooks
+RainbowKit - Wallet connection UI
+Framer Motion - Animations
+Tailwind CSS - Styling
+Zustand - State management
+
+Backend
+
+Node.js - WebSocket server
+WebSocket (ws) - Real-time communication
+Ethereum - Blockchain for identity
+
+Smart Contract
+
+Solidity - ENS registration contract
+Custom ENS - Domain registration system
+
+Installation
+Prerequisites
+
+Node.js (v16 or higher)
+npm or yarn
+MetaMask or compatible Web3 wallet
