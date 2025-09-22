@@ -6,10 +6,10 @@ import { useUserStore } from '../stores/userStore'
 import toast from 'react-hot-toast'
 
 export const useRealTimeEvents = () => {
-  const { addMessage, updateGroupMessages, updateDirectMessages } = useChatStore()
+  const { addMessage } = useChatStore()
   const { addUser, updateUserOnlineStatus } = useUserStore()
 
-  // Listen for new messages
+  // Listen for new messages with better conflict resolution
   useWatchContractEvent({
     address: CONTRACT_ADDRESS,
     abi: CONTRACT_ABI,
@@ -18,8 +18,21 @@ export const useRealTimeEvents = () => {
       logs.forEach((log) => {
         const { from, to, message: content, timestamp } = log.args
         
+        // Check if we already have this message (including optimistic messages)
+        const currentMessages = useChatStore.getState().getCurrentMessages()
+        const messageExists = currentMessages.some(msg => 
+          msg.from === from && 
+          msg.content === content && 
+          Math.abs(msg.timestamp - Number(timestamp)) < 5 // Within 5 seconds
+        )
+
+        // Don't add if message already exists (prevents duplicates from optimistic updates)
+        if (messageExists) {
+          return
+        }
+        
         const messageData = {
-          id: `${from}-${to}-${timestamp}`,
+          id: `contract-${from}-${to}-${timestamp}`,
           from,
           to,
           content,
@@ -34,7 +47,10 @@ export const useRealTimeEvents = () => {
         // Show toast notification for new messages (not from current user)
         const currentUser = useUserStore.getState().currentUser
         if (from !== currentUser?.address) {
-          toast.success(`New message from ${messageData.fromName || 'Someone'}`)
+          const sender = useUserStore.getState().getUserByAddress(from)
+          const senderName = sender?.crazyName?.replace('.crazy', '') || 
+                           `${from.slice(0, 6)}...${from.slice(-4)}`
+          toast.success(`New message from ${senderName}`)
         }
       })
     }
@@ -71,7 +87,7 @@ export const useRealTimeEvents = () => {
   }
 }
 
-// Custom hook for typing indicators (simulated since contract doesn't have this)
+// Custom hook for typing indicators (local only, no real-time sync)
 export const useTypingIndicators = () => {
   const { setUserTyping, removeUserTyping } = useChatStore()
 
@@ -91,29 +107,27 @@ export const useTypingIndicators = () => {
   return { startTyping, stopTyping }
 }
 
-// Custom hook for optimistic message updates
+// Custom hook for optimistic message updates (improved)
 export const useOptimisticMessages = () => {
   const { addOptimisticMessage, confirmMessage, failMessage } = useChatStore()
 
   const sendOptimisticMessage = async (messageData, sendFunction) => {
-    // Add optimistic message immediately
-    const optimisticId = `optimistic-${Date.now()}`
+    // This is now handled directly in ChatArea for better control
+    // Keeping this for compatibility but not actively used
+    const optimisticId = `optimistic-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    
     addOptimisticMessage({
       ...messageData,
       id: optimisticId,
-      isPending: true
+      isPending: true,
+      isOptimistic: true
     })
 
     try {
-      // Execute the actual send function
       const result = await sendFunction()
-      
-      // Mark as confirmed when transaction succeeds
-      confirmMessage(optimisticId, result.hash)
-      
+      confirmMessage(optimisticId, result?.hash || 'confirmed')
       return result
     } catch (error) {
-      // Mark as failed if transaction fails
       failMessage(optimisticId, error.message)
       throw error
     }
@@ -140,15 +154,28 @@ export const useConnectionStatus = () => {
     document.addEventListener('visibilitychange', handleVisibilityChange)
     
     // Set as online when component mounts
-    window.addEventListener('focus', () => {
+    const handleFocus = () => {
       const currentUser = useUserStore.getState().currentUser
       if (currentUser) {
         updateUserOnlineStatus(currentUser.address, true)
       }
-    })
+    }
+
+    window.addEventListener('focus', handleFocus)
+
+    // Set as online initially
+    const currentUser = useUserStore.getState().currentUser
+    if (currentUser) {
+      updateUserOnlineStatus(currentUser.address, true)
+    }
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('focus', handleFocus)
     }
   }, [updateUserOnlineStatus])
+
+  return {
+    isTracking: true
+  }
 }

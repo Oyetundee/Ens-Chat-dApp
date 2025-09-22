@@ -96,14 +96,14 @@ export const useChatStore = create(
       }
     })),
 
-    // Get current chat messages
+    // Get current chat messages - FIXED: Added missing .sort() for group chat
     getCurrentMessages: () => {
       const state = get()
       
       if (state.activeChat === 'group') {
         return [...state.groupMessages, ...state.optimisticMessages.filter(msg => 
           !msg.to || msg.to === '0x0000000000000000000000000000000000000000'
-        )]
+        )].sort((a, b) => a.timestamp - b.timestamp)
       } else {
         const directMsgs = state.directMessages[state.activeChat] || []
         const optimisticMsgs = state.optimisticMessages.filter(msg => 
